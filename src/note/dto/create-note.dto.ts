@@ -8,4 +8,6 @@ export class CreateNoteDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  image: string;
 }

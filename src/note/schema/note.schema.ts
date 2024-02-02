@@ -8,6 +8,9 @@ export class Note extends Document {
 
   @Prop({ required: true })
   description: string;
+
+  @Prop()
+  image: string;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);

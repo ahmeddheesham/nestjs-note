@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class NoteService {
-    constructor(@InjectModel(Note.name) private readonly noteModel: Model<Note>) {}
+    constructor(@InjectModel('Note') private readonly noteModel: Model<Note>) {}
 
     createNote (createNoteDto: CreateNoteDto): Promise<Note> {
         const createdNote = new this.noteModel(createNoteDto);

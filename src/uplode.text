@@ -1,0 +1,18 @@
+    
+    
+    
+    @Post("/upload")
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: "./uploads",
+            filename:(req, file, cb) => {
+                cb(null, `${file.originalname}`)
+            }
+        })
+    }))
+
+    async uploadFile(){
+        return "success";
+    }
+
+
