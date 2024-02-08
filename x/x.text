@@ -1,0 +1,25 @@
+main.ts
+
+// Validation Pipe
+  app.useGlobalPipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true}))
+
+
+  // Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Notes example')
+    .setDescription('The nots API description')
+    .setVersion('1.0')
+    .addTag('notes')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+...........................................................................
+note controller
+
+    @ApiCreatedResponse({type: NoteResponseDto})
+    @ApiConsumes('multipart/form-data')
+
+...........................................................................
+
+

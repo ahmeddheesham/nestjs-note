@@ -1,0 +1,112 @@
+    
+    // upload File
+    
+    
+    @Post("upload")
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: "./uploads",
+            filename:(req, file, cb) => {
+                cb(null, `${file.originalname}`)
+            }
+        })
+    }))
+
+    uploadFile(@UploadedFile() file: Express.Multer.File){
+        return "success";
+    }
+
+
+.......................................................................................................
+
+
+// upload Files
+
+ @Post("upload")
+    @UseInterceptors(FilesInterceptor('files', 10, {
+        storage: diskStorage({
+            destination: "./uploads",
+            filename: (req, file, cb) => {
+                cb(null, `${file.originalname}`)
+            }
+        })
+    }))
+    
+    uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
+        return "success";
+    }
+
+
+    ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+    // @Post("upload")
+    // @UseInterceptors(FilesInterceptor('files', 10, {
+    //     storage: diskStorage({
+    //         destination: "./uploads",
+    //         filename: (req, file, cb) => {
+    //             cb(null, `${file.originalname}`)
+    //         }
+    //     })
+    // }))
+    
+    // uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
+    //     return "success";
+    // }
+
+
+
+
+    ...........................................................................................
+
+// Note service with Note Response Dto 
+
+
+export class NoteService {
+    constructor(@InjectModel('Note') private readonly noteModel: Model<Note>) {}
+
+    async createNote(createNoteDto: CreateNoteDto, image: string): Promise<NoteResponseDto> {
+        const createdNote = await new this.noteModel({ ...createNoteDto, image }).save();
+        return {
+            _id: createdNote._id,
+            name: createdNote.title,
+            image: buildImageUrl(createdNote.image)
+        }
+    }
+}
+
+function buildImageUrl(path: string): string {
+    return  "http:localhost:3000/" + path
+}
+
+
+...................................................................................................
+
+// Note Controller with Note Response Dto
+
+
+export class NoteController {
+    constructor(private readonly noteService: NoteService){}
+
+    @Post()
+    @ApiCreatedResponse({type: Note})
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('image', {
+        storage: diskStorage({
+            destination: "./uploads",
+            filename: (req, file, cb) => {
+                cb(null, `${file.originalname}`)
+            }
+        })
+    }))
+    create ( 
+        @Body() createNoteDto: CreateNoteDto ,
+        @UploadedFile() file: Express.Multer.File 
+        ): Promise<NoteResponseDto> {
+        console.log(file)
+        console.log(createNoteDto)
+        return this.noteService.createNote(createNoteDto, file.path);
+    };
+
+}
+
+...........................................................................................
